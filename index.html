@@ -12,7 +12,7 @@
 	<script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/Teacher_English/sw.js')
+    navigator.serviceWorker.register('/Teacher_English/Service Worker(sw).js')
       .then(reg => console.log('SW registered:', reg))
       .catch(err => console.log('SW error:', err));
   });
