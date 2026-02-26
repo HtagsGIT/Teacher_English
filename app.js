@@ -2,7 +2,7 @@
 //  ENGLISH TEACHER — Voice learning assistant
 //  Speak French/English • Get English responses + corrections
 // ═══════════════════════════════════════════════════════
-
+document.addEventListener('DOMContentLoaded', function() {
 // ── DOM ────────────────────────────────────────────────
 const startBtn      = document.getElementById('start');
 const langSelect    = document.getElementById('lang');
@@ -19,6 +19,13 @@ const pitchVal      = document.getElementById('pitchVal');
 const volVal        = document.getElementById('volVal');
 const voiceSelect   = document.getElementById('voiceSelect');
 const testVoiceBtn  = document.getElementById('testVoiceBtn');
+
+ // Vérification de sécurité
+  if (!startBtn || !langSelect || !chatContainer) {
+    console.error('Éléments DOM manquants!');
+    return;
+  }
+
 
 // ── STATE ───────────────────────────────────────────────
 const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -615,3 +622,6 @@ function handleRecognitionError(type) {
 setTimeout(() => {
   appendMessage('assistant', "👋 Hello! I'm your English teacher. You can speak to me in French or English. I'll respond in English and help you learn! Click the 🎤 button and say something!");
 }, 400);
+
+
+});
