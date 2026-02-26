@@ -1,7 +1,17 @@
 
 
 var GHPATH = 'Teacher_English';
-
+const GHPATH = 'Teacher_English';
+const CACHE_NAME = 'english-teacher-v1';
+const urlsToCache = [
+  GHPATH + '/',
+  GHPATH + '/index.html',
+  GHPATH + '/style.css',
+  GHPATH + '/app.js',
+  GHPATH + '/manifest.json',
+  GHPATH + '/icons/files/icon-192.png',
+  GHPATH + '/icons/files/icon-512.png'
+];
 
 
 
