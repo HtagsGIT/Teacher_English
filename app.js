@@ -2,78 +2,86 @@
 //  ENGLISH TEACHER — Voice learning assistant
 //  Speak French/English • Get English responses + corrections
 // ═══════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', function() {
-// ── DOM ────────────────────────────────────────────────
-const startBtn      = document.getElementById('start');
-const langSelect    = document.getElementById('lang');
-const chatContainer = document.getElementById('chatContainer');
-const tooltip       = document.getElementById('tooltip');
-const synthStatus   = document.getElementById('synthStatus');
-const visualizer    = document.getElementById('visualizer');
-const synthIdleText = document.getElementById('synthIdleText');
-const rateSlider    = document.getElementById('rateSlider');
-const pitchSlider   = document.getElementById('pitchSlider');
-const volSlider     = document.getElementById('volSlider');
-const rateVal       = document.getElementById('rateVal');
-const pitchVal      = document.getElementById('pitchVal');
-const volVal        = document.getElementById('volVal');
-const voiceSelect   = document.getElementById('voiceSelect');
-const testVoiceBtn  = document.getElementById('testVoiceBtn');
 
- // Vérification de sécurité
-  if (!startBtn || !langSelect || !chatContainer) {
-    console.error('Éléments DOM manquants!');
+// Attendre que le DOM soit complètement chargé
+document.addEventListener('DOMContentLoaded', function() {
+  
+  // ── DOM ────────────────────────────────────────────────
+  const startBtn      = document.getElementById('start');
+  const langSelect    = document.getElementById('lang');
+  const chatContainer = document.getElementById('chatContainer');
+  const tooltip       = document.getElementById('tooltip');
+  const synthStatus   = document.getElementById('synthStatus');
+  const visualizer    = document.getElementById('visualizer');
+  const synthIdleText = document.getElementById('synthIdleText');
+  const rateSlider    = document.getElementById('rateSlider');
+  const pitchSlider   = document.getElementById('pitchSlider');
+  const volSlider     = document.getElementById('volSlider');
+  const rateVal       = document.getElementById('rateVal');
+  const pitchVal      = document.getElementById('pitchVal');
+  const volVal        = document.getElementById('volVal');
+  const voiceSelect   = document.getElementById('voiceSelect');
+  const testVoiceBtn  = document.getElementById('testVoiceBtn');
+
+  // Vérification que tous les éléments existent
+  if (!startBtn) {
+    console.error('Bouton start manquant!');
     return;
   }
 
+  // ── STATE ───────────────────────────────────────────────
+  const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition    = null;
+  let isListening    = false;
+  let isSpeaking     = false;
+  let allVoices      = [];
+  let speakWatchdog  = null;
 
-// ── STATE ───────────────────────────────────────────────
-const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition    = null;
-let isListening    = false;
-let isSpeaking     = false;
-let allVoices      = [];
-let speakWatchdog  = null;
+  // Simple translation cache (French → English common phrases)
+  const translationCache = {
+    // Will be populated dynamically with common phrases
+  };
 
-// Simple translation cache (French → English common phrases)
-const translationCache = {
-  // Will be populated dynamically with common phrases
-};
+  // ── SLIDERS ───────────────────────────────────────────
+  if (rateSlider && rateVal) {
+    rateSlider.addEventListener('input', () => rateVal.textContent = parseFloat(rateSlider.value).toFixed(1));
+  }
+  if (pitchSlider && pitchVal) {
+    pitchSlider.addEventListener('input', () => pitchVal.textContent = parseFloat(pitchSlider.value).toFixed(1));
+  }
+  if (volSlider && volVal) {
+    volSlider.addEventListener('input', () => volVal.textContent = Math.round(volSlider.value * 100));
+  }
 
-// ── SLIDERS ───────────────────────────────────────────
-rateSlider.addEventListener('input',  () => rateVal.textContent  = parseFloat(rateSlider.value).toFixed(1));
-pitchSlider.addEventListener('input', () => pitchVal.textContent = parseFloat(pitchSlider.value).toFixed(1));
-volSlider.addEventListener('input',   () => volVal.textContent   = Math.round(volSlider.value * 100));
+  // ═══════════════════════════════════════════════════════
+  //  VOICE MANAGEMENT
+  // ═══════════════════════════════════════════════════════
+  function populateVoiceList() {
+    if (!window.speechSynthesis) return;
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices.length || !voiceSelect) return;
+    allVoices = voices;
 
-// ═══════════════════════════════════════════════════════
-//  VOICE MANAGEMENT
-// ═══════════════════════════════════════════════════════
-function populateVoiceList() {
-  const voices = window.speechSynthesis.getVoices();
-  if (!voices.length) return;
-  allVoices = voices;
+    // Prioritize English voices
+    const sorted = [
+      ...voices.filter(v => v.lang.startsWith('en')),
+      ...voices.filter(v => !v.lang.startsWith('en'))
+    ];
 
-  // Prioritize English voices
-  const lang = 'en'; // Always prefer English for teaching
-  const sorted = [
-    ...voices.filter(v => v.lang.startsWith('en')),
-    ...voices.filter(v => !v.lang.startsWith('en'))
-  ];
+    voiceSelect.innerHTML = '';
+    sorted.forEach(voice => {
+      const opt = document.createElement('option');
+      opt.dataset.idx = voices.indexOf(voice);
+      opt.textContent = `${voice.name} (${voice.lang})${voice.lang.startsWith('en') ? ' 🇬🇧' : ''}`;
+      if (voice.lang.startsWith('en')) opt.selected = true;
+      voiceSelect.appendChild(opt);
+    });
+  }
 
-  voiceSelect.innerHTML = '';
-  sorted.forEach(voice => {
-    const opt       = document.createElement('option');
-    opt.dataset.idx = voices.indexOf(voice);
-    opt.textContent = `${voice.name} (${voice.lang})${voice.lang.startsWith('en') ? ' 🇬🇧' : ''}`;
-    if (voice.lang.startsWith('en')) opt.selected = true;
-    voiceSelect.appendChild(opt);
-  });
-}
-
-if (window.speechSynthesis) {
-  window.speechSynthesis.onvoiceschanged = populateVoiceList;
-  setTimeout(populateVoiceList, 200);
-}
+  if (window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = populateVoiceList;
+    setTimeout(populateVoiceList, 200);
+  }
 
 langSelect.addEventListener('change', () => {
   populateVoiceList();
