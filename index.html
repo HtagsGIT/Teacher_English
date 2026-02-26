@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant Vocal</title>
+	<link rel="stylesheet" href="style.css">
+	<script src="app.js"></script>
+	<link rel="manifest" href="manifest.json">
+	<meta name="theme-color" content="#7c3aed">
+	
+</head>
+
+
+<body>
+
+
+
+<div class="container">
+  <h1>🇬🇧 English Teacher • Assistant</h1>
+
+  <!-- Language selector (for learner's native language) -->
+  <div class="lang-selector">
+    <label>🌐 Your language
+      <select id="lang">
+        <option value="fr-FR" selected>Français → English</option>
+        <option value="en-GB">English → English (immersive)</option>
+        <option value="es-ES">Español → English</option>
+        <option value="de-DE">Deutsch → English</option>
+        <option value="it-IT">Italiano → English</option>
+      </select>
+    </label>
+    <div class="hint">💡 I speak English • You speak your language</div>
+  </div>
+
+  <!-- Voice Synthesizer -->
+  <div class="synth-panel" id="synthPanel">
+    <div class="synth-header">
+      <span class="synth-label">🎛️ English Voice</span>
+      <span class="synth-status" id="synthStatus">Ready</span>
+    </div>
+
+    <!-- Sound visualizer -->
+    <div class="visualizer" id="visualizer">
+      <div class="wave-bars" id="waveBars">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="synth-idle-text" id="synthIdleText">Listening...</div>
+    </div>
+
+    <!-- Voice controls -->
+    <div class="synth-controls">
+      <div class="synth-control">
+        <label>Speed <span id="rateVal">1.0</span>x</label>
+        <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1.0">
+      </div>
+      <div class="synth-control">
+        <label>Pitch <span id="pitchVal">1.0</span></label>
+        <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1.0">
+      </div>
+      <div class="synth-control">
+        <label>Volume <span id="volVal">100</span>%</label>
+        <input type="range" id="volSlider" min="0" max="1" step="0.05" value="1">
+      </div>
+    </div>
+
+    <!-- Voice selection -->
+    <div class="voice-selector">
+      <label>🗣️ English Voice</label>
+      <select id="voiceSelect"></select>
+    </div>
+
+    <!-- Test voice button -->
+    <button id="testVoiceBtn" class="test-btn">🔊 Test voice</button>
+  </div>
+
+  <!-- Chat area -->
+  <div class="chat-container" id="chatContainer"></div>
+
+  <!-- Main controls -->
+  <div class="controls">
+    <button id="start" class="mic-button" title="Click to speak">
+      <span class="mic-icon">🎤</span>
+    </button>
+    <div class="mode-selector">
+      <label>
+        <input type="radio" name="responseMode" value="speak" checked>
+        <span>🔊 Voice + Text</span>
+      </label>
+      <label>
+        <input type="radio" name="responseMode" value="text">
+        <span>📝 Text only</span>
+      </label>
+    </div>
+    <div class="learning-badge">
+      <span>📚 Learning Mode</span>
+    </div>
+  </div>
+
+  <span id="tooltip">✅ Copied!</span>
+</div>
+</body>
+</html>
