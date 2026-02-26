@@ -4,7 +4,16 @@
   "start_url": "Teacher_English"
 }
 
-
+{
+  "start_url": "Teacher_English",
+  "scope": "Teacher_English",
+  "icons": [
+    {
+      "src": "/Teacher_English/icons/icon-192.png",
+      ...
+    }
+  ]
+}
 
 {
   "name": "English Teacher - Assistant Vocal",
