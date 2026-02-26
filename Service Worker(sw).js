@@ -1,31 +1,16 @@
-
-
-var GHPATH = 'Teacher_English';
-const GHPATH = 'Teacher_English';
+const GHPATH = '/Teacher_English';
 const CACHE_NAME = 'english-teacher-v1';
+
 const urlsToCache = [
   GHPATH + '/',
   GHPATH + '/index.html',
   GHPATH + '/style.css',
   GHPATH + '/app.js',
   GHPATH + '/manifest.json',
-  GHPATH + '/icons/files/icon-192.png',
-  GHPATH + '/icons/files/icon-512.png'
+  GHPATH + '/icons/icon-192.png',
+  GHPATH + '/icons/icon-512.png'
 ];
 
-
-
-const CACHE_NAME = 'english-teacher-v1';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/app.js',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
-];
-
-// Installation : mise en cache des fichiers
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -33,7 +18,6 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activation : nettoyage des anciens caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -48,7 +32,6 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Interception des requêtes : stratégie cache-first
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
